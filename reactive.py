@@ -24,15 +24,19 @@ def ping_ips(ip1, ip2):
     elif res2 and not res1:
         return ip2
     else:
-        return None
+        print("Both IPs are down", ip1, ip2)
+        raise Exception("Both IPs are down")
 
 
 def ops_ping():
     def _ping(source):
         def subscribe(observer, scheduler=None):
             def on_next(ips):
-                res = ping_ips(ips[0], ips[1])
-                observer.on_next(res)
+                try:
+                    res = ping_ips(ips[0], ips[1])
+                    observer.on_next(res)
+                except Exception as e:  # pylint: disable=broad-except
+                    observer.on_error(e)
 
             return source.subscribe(
                 on_next,
@@ -54,8 +58,11 @@ if __name__ == "__main__":
 
     for ip_tuple_list_chunk in ip_tuple_list_chunks:
         rx.of(*ip_tuple_list_chunk).pipe(
-            ops_ping(), ops.subscribe_on(pool_scheduler),
+            ops_ping(),
+            ops.retry(3),
+            ops.subscribe_on(pool_scheduler),
             ops.filter(lambda ip: ip),
+            ops.catch(rx.empty()),
         ).subscribe(
             on_next=lambda ip: print(f"{current_thread().name} {ip}"),
             on_error=lambda e: print(e),
