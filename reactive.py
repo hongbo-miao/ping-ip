@@ -9,6 +9,8 @@ import numpy as np
 from tenacity import retry, stop_after_attempt
 
 
+SKIP_SET = set(["108"])
+
 @retry(stop=stop_after_attempt(3))
 def ping(ip):
     retval = subprocess.call(["ping", "-c1", "-n", "-i0.1", "-W1", ip], stdout=subprocess.DEVNULL)
@@ -65,6 +67,8 @@ if __name__ == "__main__":
 
     for ip_tuple_list_chunk in ip_tuple_list_chunks:
         rx.of(*ip_tuple_list_chunk).pipe(
+            # Exclude both 192.168.1.56 and 192.168.2.56 by last "56"
+            ops.filter(lambda ips: ips[0][ips[0].rindex(".")+1:] not in SKIP_SET),
             ops_ping(),
             # ops.retry(3),
             ops.catch(rx.empty()),
