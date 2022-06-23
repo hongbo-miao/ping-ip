@@ -6,26 +6,33 @@ import multiprocessing
 import reactivex as rx
 import subprocess
 import numpy as np
+from tenacity import retry, stop_after_attempt
 
 
+@retry(stop=stop_after_attempt(3))
 def ping(ip):
     retval = subprocess.call(["ping", "-c1", "-n", "-i0.1", "-W1", ip], stdout=subprocess.DEVNULL)
+
+    # host is up
     if retval == 0:
-        return True  # host is up
+        return ip
     else:
-        return False  # host is down
+        raise Exception(f"{ip} is not active")
 
 
 def ping_ips(ip1, ip2):
-    res1 = ping(ip1)
-    res2 = ping(ip2)
-    if res1 and not res2:
-        return ip1
-    elif res2 and not res1:
-        return ip2
-    else:
-        print("Both IPs are down", ip1, ip2)
-        raise Exception("Both IPs are down")
+    res1 = ""
+    res2 = ""
+    try:
+        res1 = ping(ip1)
+    except Exception:
+        pass
+
+    try:
+        res2 = ping(ip2)
+    except Exception:
+        pass
+    return res1, res2
 
 
 def ops_ping():
@@ -35,7 +42,7 @@ def ops_ping():
                 try:
                     res = ping_ips(ips[0], ips[1])
                     observer.on_next(res)
-                except Exception as e:  # pylint: disable=broad-except
+                except Exception as e:
                     observer.on_error(e)
 
             return source.subscribe(
@@ -59,11 +66,10 @@ if __name__ == "__main__":
     for ip_tuple_list_chunk in ip_tuple_list_chunks:
         rx.of(*ip_tuple_list_chunk).pipe(
             ops_ping(),
-            ops.retry(3),
-            ops.subscribe_on(pool_scheduler),
-            ops.filter(lambda ip: ip),
+            # ops.retry(3),
             ops.catch(rx.empty()),
+            ops.subscribe_on(pool_scheduler),
+            ops.filter(lambda ips: ips[0] or ips[1]),
         ).subscribe(
             on_next=lambda ip: print(f"{current_thread().name} {ip}"),
-            on_error=lambda e: print(e),
-        )
+            on_error=lambda e: print(e))
