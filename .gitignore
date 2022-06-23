@@ -1,2 +1,7 @@
-.idea
-__pycache__
+# Anywhere
+**/.DS_Store
+**/__pycache__
+
+# Root
+/.idea
+/.mypy_cache

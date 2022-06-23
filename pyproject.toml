@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "ping-ip"
+version = "1.0.0"
+description = "Ping IP"
+authors = ["Hongbo Miao"]
+
+[tool.poetry.dependencies]
+python = "3.10.x"
+numpy = "1.23.0"
+reactivex = "4.0.2"
+tenacity = "8.0.1"
+
+[tool.poetry.dev-dependencies]
+black = "22.3.0"
+flake8 = "4.0.1"
+isort = "5.10.1"
+mypy = "0.961"
+poethepoet = "0.13.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+run-reactive = "python reactive/reactive.py"
+run-multiprocess = "python multiprocess/multiprocess.py"
+static-type-check-mypy = "mypy . --install-types --non-interactive"
+lint-black = "black . --check"
+lint-black-fix = "black ."
+lint-flake8 = "flake8 ."
+lint-isort = "isort . --skip-gitignore --check-only"
+lint-isort-fix = "isort . --skip-gitignore"
