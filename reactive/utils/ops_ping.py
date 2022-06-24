@@ -1,6 +1,6 @@
 import reactivex as rx
 
-from .ping_ips import ping_ips
+from .ping import ping_ips
 
 
 def ops_ping():

@@ -22,9 +22,17 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
+# Run
 run-reactive = "python reactive/main.py"
 run-multiprocess = "python multiprocess/multiprocess.py"
+
+# Test
+test = "python -m unittest discover -s reactive"
+
+# Static Type Check
 static-type-check-mypy = "mypy . --install-types --non-interactive"
+
+# Lint
 lint-black = "black . --check"
 lint-black-fix = "black ."
 lint-flake8 = "flake8 ."

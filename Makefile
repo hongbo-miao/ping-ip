@@ -8,6 +8,10 @@ run-reactive:
 run-multiprocess:
 	poetry run poe run-multiprocess
 
+# Test
+test:
+	poetry run poe test
+
 # Static Type Check
 python-static-type-check:
 	poetry run poe static-type-check-mypy
