@@ -12,8 +12,6 @@ poetry install
 
 This method supports retry, skip list. It leverages the power of [RxPY](https://github.com/ReactiveX/RxPY).
 
-```shell
-
 You can change the config by updating the `reactive/config.py` file.
 
 The code is in the `reactive` folder.
@@ -36,11 +34,15 @@ poetry run poe run-multiprocess
 
 ## Static Type Check
 
+It uses [Mypy](https://github.com/python/mypy) to static type check the code.
+
 ```shell
 poetry run poe static-type-check-mypy
 ```
 
 ## Lint
+
+It uses [Black](https://github.com/psf/black), [Flake8](https://github.com/PyCQA/flake8), [isort](https://github.com/PyCQA/isort) to lint the code.
 
 ```shell
 poetry run poe lint-black
@@ -52,7 +54,7 @@ poetry run poe lint-isort-fix
 
 ## Test
 
-The tests include unit tests and marble tests.
+This includes unit testing and [marble testing](https://rxjs.dev/guide/testing/marble-testing).
 
 ```shell
 poetry run poe test
