@@ -8,9 +8,13 @@ poetry install
 
 ## Run
 
-### Method 1 (Recommended)
+### Method 1 (Better)
 
 This method supports retry, skip list.
+
+You can change the config by updating the `reactive/config.py` file.
+
+The code is in the `reactive` folder.
 
 ```shell
 poetry run poe run-reactive
@@ -20,7 +24,9 @@ poetry run poe run-reactive
 
 This method does not support retry, skip list.
 
-Because no retry, so not reliable due to some IPs might get timeout in the first scan.
+Since there is no retry, it is not reliable because the only scan can get timeout.
+
+The code is in the `multiprocess` folder.
 
 ```shell
 poetry run poe run-multiprocess
