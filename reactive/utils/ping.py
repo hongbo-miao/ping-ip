@@ -10,6 +10,24 @@ from tenacity import RetryError, retry, retry_if_exception_type, stop_after_atte
     retry=retry_if_exception_type(ConnectionError),
 )
 def ping_ip(ip: str) -> str:
+    """
+    Ping an IP address and return the IP if it is pingable.
+
+    Parameters
+    ----------
+    ip : str
+        ip address to ping
+
+    Returns
+    -------
+    str
+        ip address
+
+    Raises
+    ------
+    RetryError
+        if the ip is not pingable after the configured number of retries
+    """
     retval = subprocess.call(
         ["ping", "-c1", "-n", "-i0.1", "-W1", ip], stdout=subprocess.DEVNULL
     )
@@ -22,6 +40,21 @@ def ping_ip(ip: str) -> str:
 
 
 def ping_ips(ip1: str, ip2: str) -> Tuple[Optional[str], Optional[str]]:
+    """
+    Ping two IP addresses and return the IPs if they are pingable.
+
+    Parameters
+    ----------
+    ip1 : str
+        ip address to ping
+    ip2 : str
+        ip address to ping
+
+    Returns
+    -------
+    Tuple[Optional[str], Optional[str]]
+        ip addresses if they are pingable
+    """
     res1 = None
     res2 = None
     try:
