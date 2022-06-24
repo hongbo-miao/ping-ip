@@ -2,13 +2,12 @@ import ipaddress
 import multiprocessing
 from threading import current_thread
 
+import config
 import numpy as np
 import reactivex as rx
 from reactivex import operators as ops
 from reactivex.scheduler import ThreadPoolScheduler
 from utils.ops_ping import ops_ping
-import config
-
 
 if __name__ == "__main__":
     skip_set = set(config.SKIP_LIST)
@@ -31,6 +30,7 @@ if __name__ == "__main__":
 
     # Split the IP list into chunks based on the number of CPUs in the system
     ip_tuple_list_chunks = np.array_split(ip_tuple_list, optimal_thread_count)
+    print(ip_tuple_list_chunks)
 
     for ip_tuple_list_chunk in ip_tuple_list_chunks:
         rx.of(*ip_tuple_list_chunk).pipe(
