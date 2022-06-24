@@ -1,6 +1,7 @@
 import ipaddress
 import multiprocessing
 from threading import current_thread
+from typing import Callable, Optional, Tuple
 
 import config
 import numpy as np
@@ -30,18 +31,17 @@ if __name__ == "__main__":
 
     # Split the IP list into chunks based on the number of CPUs in the system
     ip_tuple_list_chunks = np.array_split(ip_tuple_list, optimal_thread_count)
-    print(ip_tuple_list_chunks)
 
     for ip_tuple_list_chunk in ip_tuple_list_chunks:
         rx.of(*ip_tuple_list_chunk).pipe(
             # Exclude both 192.168.1.x and 192.168.2.x by last x
-            ops.filter(lambda ips: ips[0][ips[0].rindex(".") + 1 :] not in skip_set),
+            ops.filter(lambda ips: ips[0][ips[0].rindex(".") + 1 :] not in skip_set),  # type: ignore
             # Ping the IP by the pair (192.168.1.x and 192.168.2.x)
             ops_ping(),
             # Concurrency
             ops.subscribe_on(pool_scheduler),
             # Hide if both 192.168.1.x and 192.168.2.x are not pingable
-            ops.filter(lambda ips: ips[0] or ips[1]),
+            ops.filter(lambda ips: ips[0] or ips[1]),  # type: ignore
         ).subscribe(
             on_next=lambda ip: print(f"{current_thread().name} {ip}"),
             on_error=lambda e: print(e),
