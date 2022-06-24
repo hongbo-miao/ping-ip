@@ -1,59 +1,14 @@
 import ipaddress
 import multiprocessing
-import subprocess
 from threading import current_thread
 
 import numpy as np
 import reactivex as rx
 from reactivex import operators as ops
 from reactivex.scheduler import ThreadPoolScheduler
-from tenacity import retry, stop_after_attempt
+from utils.ops_ping import ops_ping
 
 SKIP_LIST = set(["108"])
-
-
-@retry(stop=stop_after_attempt(3))
-def ping(ip):
-    retval = subprocess.call(
-        ["ping", "-c1", "-n", "-i0.1", "-W1", ip], stdout=subprocess.DEVNULL
-    )
-
-    # host is up
-    if retval == 0:
-        return ip
-    else:
-        raise Exception(f"{ip} is not active")
-
-
-def ping_ips(ip1, ip2):
-    res1 = ""
-    res2 = ""
-    try:
-        res1 = ping(ip1)
-    except Exception:
-        pass
-    try:
-        res2 = ping(ip2)
-    except Exception:
-        pass
-    return res1, res2
-
-
-def ops_ping():
-    def _ping(source):
-        def subscribe(observer, scheduler=None):
-            def on_next(ips):
-                try:
-                    res = ping_ips(ips[0], ips[1])
-                    observer.on_next(res)
-                except Exception as e:
-                    observer.on_error(e)
-
-            return source.subscribe(on_next, observer.on_error, observer.on_completed)
-
-        return rx.create(subscribe)
-
-    return _ping
 
 
 if __name__ == "__main__":
