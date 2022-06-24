@@ -10,7 +10,9 @@ poetry install
 
 ### Method 1 (Better)
 
-This method supports retry, skip list.
+This method supports retry, skip list. It leverages the power of [RxPY](https://github.com/ReactiveX/RxPY).
+
+```shell
 
 You can change the config by updating the `reactive/config.py` file.
 
