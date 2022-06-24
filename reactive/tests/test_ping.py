@@ -5,7 +5,7 @@ from tenacity import RetryError
 from utils.ping import ping_ip, ping_ips
 
 
-class TestStringMethods(unittest.TestCase):
+class TestPing(unittest.TestCase):
     @patch("subprocess.call")
     def test_ping_ip_succeed(self, mock_subprocess_call: MagicMock) -> None:
         mock_subprocess_call.return_value = 0
@@ -26,7 +26,3 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(
             ping_ips("192.168.1.42", "192.168.2.42"), ("192.168.1.42", "192.168.2.42")
         )
-
-
-if __name__ == "__main__":
-    unittest.main()
