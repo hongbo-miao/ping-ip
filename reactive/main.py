@@ -7,36 +7,40 @@ import reactivex as rx
 from reactivex import operators as ops
 from reactivex.scheduler import ThreadPoolScheduler
 from utils.ops_ping import ops_ping
-
-SKIP_LIST = set(["108"])
+import config
 
 
 if __name__ == "__main__":
+    skip_set = set(config.SKIP_LIST)
     optimal_thread_count = multiprocessing.cpu_count()
     pool_scheduler = ThreadPoolScheduler(optimal_thread_count)
 
+    # Get [('192.168.1.1', '192.168.2.1'), ('192.168.1.2', '192.168.2.2'), ...]
     ip_tuple_list = list(
         zip(
             map(
                 lambda ip: str(ip),
-                list(ipaddress.ip_network("192.168.1.0/24").hosts()),
+                list(ipaddress.ip_network(config.IP_ADDRESS_1).hosts()),
             ),
             map(
                 lambda ip: str(ip),
-                list(ipaddress.ip_network("192.168.2.0/24").hosts()),
+                list(ipaddress.ip_network(config.IP_ADDRESS_2).hosts()),
             ),
         )
     )
+
+    # Split the IP list into chunks based on the number of CPUs in the system
     ip_tuple_list_chunks = np.array_split(ip_tuple_list, optimal_thread_count)
 
     for ip_tuple_list_chunk in ip_tuple_list_chunks:
         rx.of(*ip_tuple_list_chunk).pipe(
-            # Exclude both 192.168.1.56 and 192.168.2.56 by last "56"
-            ops.filter(lambda ips: ips[0][ips[0].rindex(".") + 1 :] not in SKIP_LIST),
+            # Exclude both 192.168.1.x and 192.168.2.x by last x
+            ops.filter(lambda ips: ips[0][ips[0].rindex(".") + 1 :] not in skip_set),
+            # Ping the IP by the pair (192.168.1.x and 192.168.2.x)
             ops_ping(),
-            # ops.retry(3),
-            ops.catch(rx.empty()),
+            # Concurrency
             ops.subscribe_on(pool_scheduler),
+            # Hide if both 192.168.1.x and 192.168.2.x are not pingable
             ops.filter(lambda ips: ips[0] or ips[1]),
         ).subscribe(
             on_next=lambda ip: print(f"{current_thread().name} {ip}"),
