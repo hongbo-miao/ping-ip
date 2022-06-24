@@ -52,6 +52,8 @@ poetry run poe lint-isort-fix
 
 ## Test
 
+The tests include unit tests and marble tests.
+
 ```shell
 poetry run poe test
 ```

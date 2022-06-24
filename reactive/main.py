@@ -7,14 +7,14 @@ import numpy as np
 import reactivex as rx
 from reactivex import operators as ops
 from reactivex.scheduler import ThreadPoolScheduler
-from utils.ops_ping import ops_ping
+from utils.ops import ops_ping
 
 if __name__ == "__main__":
     skip_set = set(config.SKIP_LIST)
     optimal_thread_count = multiprocessing.cpu_count()
     pool_scheduler = ThreadPoolScheduler(optimal_thread_count)
 
-    # Get [('192.168.1.1', '192.168.2.1'), ('192.168.1.2', '192.168.2.2'), ...]
+    # Get [("192.168.1.1", "192.168.2.1"), ("192.168.1.2", "192.168.2.2"), ...]
     ip_tuple_list = list(
         zip(
             map(
