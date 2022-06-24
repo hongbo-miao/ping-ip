@@ -47,3 +47,9 @@ poetry run poe lint-flake8
 poetry run poe lint-isort
 poetry run poe lint-isort-fix
 ```
+
+## Test
+
+```shell
+poetry run poe test
+```
