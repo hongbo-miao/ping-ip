@@ -15,7 +15,7 @@ class TestPing(unittest.TestCase):
     def test_ping_ip_failed(self, mock_subprocess_call: MagicMock) -> None:
         with self.assertRaises(RetryError):
             mock_subprocess_call.return_value = 2
-            self.assertEqual(ping_ip("192.168.1.42"), "192.168.1.41")
+            self.assertEqual(ping_ip("192.168.1.42"), "192.168.1.42")
 
     @patch("utils.ping.ping_ip")
     def test_ping_ips(self, mock_ping_ip: MagicMock) -> None:
