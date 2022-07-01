@@ -28,7 +28,7 @@ def main():
     )
     with Pool() as pool:
         raw_ips = pool.starmap(ping_ips, ip_list)
-        print(list(filter(lambda ips: ips[0] or ips[1], raw_ips)))
+        print(list(filter(lambda ips: any(ips), raw_ips)))
 
 
 if __name__ == "__main__":

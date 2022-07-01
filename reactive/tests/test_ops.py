@@ -17,7 +17,7 @@ class TestOps(unittest.TestCase):
         ip_tuple_list = [("192.168.1.1", "192.168.2.1"), ("192.168.1.2", "192.168.2.2")]
         obs = rx.from_(ip_tuple_list).pipe(
             ops_ping(),
-            ops.filter(lambda ips: ips[0] or ips[1]),  # type: ignore
+            ops.filter(lambda ips: any(ips)),
         )
         res: List[Tuple[Optional[str], Optional[str]]] = []
         obs.subscribe(on_next=res.append)
@@ -32,7 +32,7 @@ class TestOps(unittest.TestCase):
         ip_tuple_list = [("192.168.1.1", "192.168.2.1"), ("192.168.1.2", "192.168.2.2")]
         obs = rx.from_(ip_tuple_list).pipe(
             ops_ping(),
-            ops.filter(lambda ips: ips[0] or ips[1]),  # type: ignore
+            ops.filter(lambda ips: any(ips)),
         )
         res: List[Tuple[Optional[str], Optional[str]]] = []
         obs.subscribe(on_next=res.append)

@@ -1,7 +1,6 @@
 import ipaddress
 import multiprocessing
 from threading import current_thread
-from typing import Callable, Optional, Tuple
 
 import config
 import numpy as np
@@ -41,7 +40,7 @@ if __name__ == "__main__":
             # Concurrency
             ops.subscribe_on(pool_scheduler),
             # Hide if both 192.168.1.x and 192.168.2.x are not pingable
-            ops.filter(lambda ips: ips[0] or ips[1]),  # type: ignore
+            ops.filter(lambda ips: any(ips)),
         ).subscribe(
             on_next=lambda ip: print(f"{current_thread().name} {ip}"),
             on_error=lambda e: print(e),
